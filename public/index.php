@@ -17,8 +17,9 @@ session_start();
 $settings = require __DIR__ . '/../src/settings.php';
 $app = new \Slim\App($settings);
 
-//modelos
-require __DIR__ . '/../models/empresa.php';
+//helpers
+require __DIR__ . '/../helpers/empresa.php';
+require __DIR__ . '/../helpers/produtos.php';
 
 // Set up dependencies
 require __DIR__ . '/../src/dependencies.php';

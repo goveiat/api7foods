@@ -6,12 +6,12 @@ class Empresa {
 
     }
 
-    public function qsDados(){
+    public function qsDados($host){
         return "
             SELECT c.IDCompany, c.Name, c.Background, c.SEOName, c.Description, c.Email, i.URL as Logo
             from company as c
             inner join image as i on i.ID = c.IDCompany and i.Type = 'logo'
-            where  c.Username like :host";
+            where  c.Username like '%$host%'";
     }
 
     public function qsEnderecos($id){
@@ -29,17 +29,17 @@ class Empresa {
             where c.IDCompany = $id ";
     }
 
-    public function qsHorarios($id, $horario){
+    public function qsHorario($id, $horario){
         return "SELECT * from $horario where IDShop = $id ";
     }
 
     public function frmHorario($horario){
-
+        $ret = array();
         for ($i=1; $i < 8; $i++) {
             $horas = array();
             foreach ($horario as $h) {
-                if (strpos($h->Day, (string)$i) !== false) {
-                    $horas[] = array('Opens'=> $h->Opens, 'Closes'=>$h->Closes);
+                if (strpos($h['Day'], (string)$i) !== false) {
+                    $horas[] = array('Opens'=> $h['Opens'], 'Closes'=>$h['Closes']);
                 }
             }
             $ret[$i] = $horas;

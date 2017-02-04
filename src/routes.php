@@ -1,43 +1,67 @@
 <?php
-$model = new Empresa();
+
 $app->get('/', function () {
     return $this->response->withJson(array('index'=> 'api7foods'));
 });
 
-$app->get('/empresa/[{host}]', function ($request, $response, $args) use ($model) {
-    $host = "%".$args['host']."%";
+/**
+* @empresa
+**/
+$app->get('/empresa/[{host}]', function ($request, $response, $args) {
+    $h = new Empresa();
+
     $retorno = array();
 
-    $d = $this->db->prepare($model->qsDados());
-    $d->bindParam("host", $host);
-    $d->execute();
-    $empresa = $d->fetchObject();
+    $empresa = $this->db->query($h->qsDados($args['host']))->fetchObject();
 
     if($empresa){
         $retorno['empresa'] = $empresa;
         $id = $empresa->IDCompany;
 
         //Endereços
-        $d = $this->db->prepare($model->qsEnderecos($id));
-        $d->execute();
-        $retorno['enderecos'] = $d->fetchAll();
+        $retorno['enderecos']= $this->db->query($h->qsEnderecos($id))->fetchAll();
 
         //Horario Func
-        $d = $this->db->prepare($model->qsHorarios($id, 'businesshours'));
-        $d->execute();
-        $retorno['h_funcionamento'] = $d->fetchAll();
-
+        $temp = $this->db->query($h->qsHorario($id, 'businesshours'))->fetchAll();
+        $retorno['h_funcionamento'] = $h->frmHorario($temp);
 
         //Horario Entrega
-        $d = $this->db->prepare($model->qsHorarios($id, 'openinghours'));
-        $d->execute();
-        $retorno['h_entrega'] = $d->fetchAll();
+        $temp = $this->db->query($h->qsHorario($id, 'openinghours'))->fetchAll();
+        $retorno['h_entrega'] = $h->frmHorario($temp);
 
         //Formas de pagamento
-        $d = $this->db->prepare($model->qsPagamentos($id));
-        $d->execute();
-        $retorno['tipo_pagamento'] = $d->fetchAll();
+        $retorno['tipo_pagamento'] = $this->db->query($h->qsPagamentos($id))->fetchAll();
     }
+
+    return $this->response->withJson($retorno);
+});
+
+
+/**
+* @produtos
+**/
+$app->get('/empresa/{id}/produtos', function ($request, $response, $args) {
+    $h = new Produtos();
+
+    $retorno = array();
+
+    $id = $args['id'];
+
+    //Produtos
+    $temp = $this->db->query($h->qsProdutos($id))->fetchAll();
+    $retorno['categorias'] = $h->frmProdutos($temp);
+
+    //Tamanhos
+    $temp = $this->db->query($h->qsTamanhos($id))->fetchAll();
+    $retorno['tamanhos'] = $h->frmTamanhos($temp);
+
+    //Variedades
+    $temp = $this->db->query($h->qsVariedades($id))->fetchAll();
+    $retorno['variedades'] = $h->frmVariedades($temp, $retorno['tamanhos']);
+
+    //Opções
+    $temp = $this->db->query($h->qsOpcoes($id))->fetchAll();
+    $retorno['opcoes'] = $h->frmOpcoes($temp);
 
     return $this->response->withJson($retorno);
 });
