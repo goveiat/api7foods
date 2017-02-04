@@ -1,4 +1,5 @@
 <?php
+use \Firebase\JWT\JWT;
 
 $app->get('/', function () {
     return $this->response->withJson(array('index'=> 'api7foods'));
@@ -70,22 +71,27 @@ $app->get('/empresa/{id}/produtos', function ($request, $response, $args) {
 * @login
 **/
 $app->post('/login', function ($request, $response) {
+
     $h = new Login();
 
     $retorno = [];
 
     $cred = $request->getParsedBody();
 
-    $auth = $this->db->query($h->qsAuth($cred['user'], $cred['password']))->fetchObject();
+    $dados = $this->db->query($h->qsAuth($cred['user'], $cred['password']))->fetchObject();
 
-    if($auth){
-        return $this->response->withJson($auth);
+    if($dados){
+        $token = JWT::encode(
+            ["iat"=> strtotime("now"), "exp"=>strtotime("+5 minutes"), "iss"=>"$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"],
+            $_ENV['JWTFOODS']
+        );
+        return $this->response->withJson(["dados"=>$dados, "jwt"=>$token]);
     }else{
         return $this->response->withStatus(403);
     }
 });
 
 
-$app->get('/cliente', function ($request, $response) {
-    return $this->response->withJson('oi');
+$app->get('/conta', function ($request, $response) {
+    return $this->response->withJson($request->getAttribute("token"));
 });
