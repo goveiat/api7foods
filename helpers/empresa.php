@@ -16,7 +16,7 @@ class Empresa {
 
     public function qsEnderecos($id){
         return "
-            SELECT Address, Address2, Address3, City, SEOCity, Telephone, MapLat, MapLong, Nickname, State
+            SELECT Address, Address2, Address3, Number, City, SEOCity, Telephone, MapLat, MapLong, Nickname, State
             from address
             where Entity = 'company' and IDEntity = $id ";
     }
