@@ -16,19 +16,20 @@ session_start();
 // Instantiate the app
 $settings = require __DIR__ . '/../src/settings.php';
 $app = new \Slim\App($settings);
+
 $dotenv = new Dotenv\Dotenv(__DIR__ . '/..');
 $dotenv->load();
 
-// echo $_ENV['JWTFOODS'];
 $app->add(new \Slim\Middleware\JwtAuthentication([
     "secure" => false,
-    "secret" => "supersecretkeyyoushouldnotcommittogithub",
-    // "path" => '/api'
+    "path" => ['/dados', '/comprar'],
+    "secret" => $_ENV['JWTFOODS'],
 ]));
 
 //helpers
 require __DIR__ . '/../helpers/empresa.php';
 require __DIR__ . '/../helpers/produtos.php';
+require __DIR__ . '/../helpers/login.php';
 
 // Set up dependencies
 require __DIR__ . '/../src/dependencies.php';

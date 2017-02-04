@@ -10,7 +10,7 @@ $app->get('/', function () {
 $app->get('/empresa/[{host}]', function ($request, $response, $args) {
     $h = new Empresa();
 
-    $retorno = array();
+    $retorno = [];
 
     $empresa = $this->db->query($h->qsDados($args['host']))->fetchObject();
 
@@ -43,7 +43,7 @@ $app->get('/empresa/[{host}]', function ($request, $response, $args) {
 $app->get('/empresa/{id}/produtos', function ($request, $response, $args) {
     $h = new Produtos();
 
-    $retorno = array();
+    $retorno = [];
 
     $id = $args['id'];
 
@@ -64,4 +64,23 @@ $app->get('/empresa/{id}/produtos', function ($request, $response, $args) {
     $retorno['opcoes'] = $h->frmOpcoes($temp);
 
     return $this->response->withJson($retorno);
+});
+
+/**
+* @login
+**/
+$app->post('/login', function ($request, $response) {
+    $h = new Login();
+
+    $retorno = [];
+
+    $cred = $request->getParsedBody();
+
+    $auth = $this->db->query($h->qsAuth($cred['user'], $cred['password']))->fetchObject();
+
+    if($auth){
+        return $this->response->withStatus(403);
+    }else{
+        return $this->response->withJson($auth);
+    }
 });
