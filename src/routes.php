@@ -1,7 +1,7 @@
 <?php
 $model = new Empresa();
 $app->get('/', function () {
-    echo "Foo!";
+    return $this->response->withJson(array('index'=> 'api7foods'));
 });
 
 $app->get('/empresa/[{host}]', function ($request, $response, $args) use ($model) {
