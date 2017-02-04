@@ -79,8 +79,13 @@ $app->post('/login', function ($request, $response) {
     $auth = $this->db->query($h->qsAuth($cred['user'], $cred['password']))->fetchObject();
 
     if($auth){
-        return $this->response->withStatus(403);
-    }else{
         return $this->response->withJson($auth);
+    }else{
+        return $this->response->withStatus(403);
     }
+});
+
+
+$app->get('/cliente', function ($request, $response) {
+    return $this->response->withJson('oi');
 });

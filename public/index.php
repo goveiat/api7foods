@@ -22,7 +22,7 @@ $dotenv->load();
 
 $app->add(new \Slim\Middleware\JwtAuthentication([
     "secure" => false,
-    "path" => ['/dados', '/comprar'],
+    "path" => ['/cliente', '/comprar'],
     "secret" => $_ENV['JWTFOODS'],
 ]));
 
