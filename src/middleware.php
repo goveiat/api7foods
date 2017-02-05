@@ -1,4 +1,12 @@
 <?php
-// Application middleware
+// Obtém dados do ambiente
+$dotenv = new Dotenv\Dotenv(__DIR__ . '/..');
+$dotenv->load();
 
-// e.g: $app->add(new \Slim\Csrf\Guard);
+//Inclui o middleware de autenticação
+$app->add(new \Slim\Middleware\JwtAuthentication([
+    "secure" => false,
+    "path" => ['/conta', '/comprar'],
+    "secret" => $_ENV['JWTFOODS'],
+    "algorithm" => "HS256",
+]));

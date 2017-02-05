@@ -1,4 +1,5 @@
 <?php
+
 use \Firebase\JWT\JWT;
 
 $app->get('/', function () {
@@ -9,8 +10,7 @@ $app->get('/', function () {
 * @empresa
 **/
 $app->get('/empresa/[{host}]', function ($request, $response, $args) {
-    $h = new Empresa();
-
+    $h = $this->Empresa;
     $retorno = [];
 
     $empresa = $this->db->query($h->qsDados($args['host']))->fetchObject();
@@ -34,6 +34,13 @@ $app->get('/empresa/[{host}]', function ($request, $response, $args) {
         $retorno['tipo_pagamento'] = $this->db->query($h->qsPagamentos($id))->fetchAll();
     }
 
+    if($request->getHeader('Autorization') != null){
+        $retorno['login'] = JWT::decode($request->getHeader('Autorization'), $_ENV['JWTFOODS'], array('HS256'));
+    }else{
+        $retorno['login'] = false;
+    }
+
+
     return $this->response->withJson($retorno);
 });
 
@@ -42,7 +49,7 @@ $app->get('/empresa/[{host}]', function ($request, $response, $args) {
 * @produtos
 **/
 $app->get('/empresa/{id}/produtos', function ($request, $response, $args) {
-    $h = new Produtos();
+    $h = $this->Produtos;
 
     $retorno = [];
 
@@ -71,8 +78,7 @@ $app->get('/empresa/{id}/produtos', function ($request, $response, $args) {
 * @login
 **/
 $app->post('/login', function ($request, $response) {
-
-    $h = new Login();
+    $h = $this->Login;
 
     $retorno = [];
 

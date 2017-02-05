@@ -19,21 +19,6 @@ session_start();
 $settings = require __DIR__ . '/../src/settings.php';
 $app = new \Slim\App($settings);
 
-$dotenv = new Dotenv\Dotenv(__DIR__ . '/..');
-$dotenv->load();
-
-$app->add(new \Slim\Middleware\JwtAuthentication([
-    "secure" => false,
-    "path" => ['/conta', '/comprar'],
-    "secret" => $_ENV['JWTFOODS'],
-    "algorithm" => "HS256",
-]));
-
-//helpers
-require __DIR__ . '/../helpers/empresa.php';
-require __DIR__ . '/../helpers/produtos.php';
-require __DIR__ . '/../helpers/login.php';
-
 // Set up dependencies
 require __DIR__ . '/../src/dependencies.php';
 

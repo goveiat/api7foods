@@ -1,5 +1,7 @@
 <?php
 
+namespace Helpers;
+
 class Login {
 
     public function __construct(){
