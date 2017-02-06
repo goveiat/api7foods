@@ -44,3 +44,7 @@ $container['Login'] = function ($c) {
 $container['Utils'] = function ($c) {
     return new Helpers\Utils();
 };
+
+$container['Cielo'] = function ($c) {
+    return new Helpers\Cielo();
+};

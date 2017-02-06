@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab1d44eec2bb704a4ba42c2f44021729",
+    "content-hash": "aeb053e77106dfa0844985c0fe1d150f",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -458,6 +458,55 @@
                 "router"
             ],
             "time": "2016-12-20T20:30:47+00:00"
+        },
+        {
+            "name": "tritoq/cielo",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nezkal/Cielo.git",
+                "reference": "112d9d7ba4cf443d915c2e3dca23b2ca766963d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nezkal/Cielo/zipball/112d9d7ba4cf443d915c2e3dca23b2ca766963d7",
+                "reference": "112d9d7ba4cf443d915c2e3dca23b2ca766963d7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Tritoq\\Payment": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Artur Magalhães",
+                    "email": "nezkal@gmail.com",
+                    "role": "developer/co-founder"
+                }
+            ],
+            "description": "Classe para integração com o Webservice da Cielo e a ferramenta de Análise de Risco",
+            "keywords": [
+                "analisis",
+                "cart",
+                "cielo",
+                "credit",
+                "gateway",
+                "payment",
+                "risk"
+            ],
+            "time": "2015-11-11 23:21:34"
         },
         {
             "name": "tuupola/slim-jwt-auth",
@@ -1678,7 +1727,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "tritoq/cielo": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

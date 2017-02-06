@@ -103,3 +103,40 @@ $app->post('/login', function ($request, $response) {
 $app->get('/conta', function ($request, $response) {
     return $this->response->withJson($request->getAttribute("token"));
 });
+
+
+
+/**
+* @pedido
+**/
+$app->get('/pedido', function ($request, $response) {
+    $h = $this->Cielo;
+
+    $h->setPortador('Vila Celeste', '35162520', 'Ap. 202', 'Rua Quirua, 53');
+    $h->setLoja('Lig China', 'http://api7foods.a2/');
+    $h->setCartao('Thiago Goveia');
+    $h->setTransacao(1);
+    $h->setPedido('Pedido Teste', 10, 500);
+
+    $s = $h->getService();
+    $t = $h->getTransacao();
+
+    $s->doTransacao(false, false);
+
+    if($h->isAutorizada()) {
+        $s->doCaptura();
+        if($h->isCapturada()) {
+            $s->doConsulta();
+            $r = $h->getRequisicoes();
+            echo 'Status: '  . $t->getStatus() . '<br/>';
+
+            if(isset($r[0])) {
+                echo 'XML:' . $r[0]->getXmlRetorno()->asXML();
+            }
+        } else {
+            echo 'Transação Não Capturada, Status: ' . $t->getStatus();
+        }
+    } else {
+        echo 'Transação Não Autorizada, Status: ' . $t->getStatus();
+    }
+});
