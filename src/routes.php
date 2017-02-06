@@ -3,7 +3,7 @@
 use \Firebase\JWT\JWT;
 
 $app->get('/', function () {
-    return $this->response->withJson(array('index'=> 'api7foods'));
+    return $this->response->withJson(['index'=> 'api7foods']);
 });
 
 /**
@@ -34,12 +34,8 @@ $app->get('/empresa/[{host}]', function ($request, $response, $args) {
         $retorno['tipo_pagamento'] = $this->db->query($h->qsPagamentos($id))->fetchAll();
     }
 
-    if($request->getHeader('Autorization') != null){
-        $retorno['login'] = JWT::decode($request->getHeader('Autorization'), $_ENV['JWTFOODS'], array('HS256'));
-    }else{
-        $retorno['login'] = false;
-    }
 
+    $this->Utils->checkToken($retorno, $request->getHeader('Authorization')[0]);
 
     return $this->response->withJson($retorno);
 });
@@ -87,10 +83,7 @@ $app->post('/login', function ($request, $response) {
     $dados = $this->db->query($h->qsAuth($cred['user'], $cred['password']))->fetchObject();
 
     if($dados){
-        $token = JWT::encode(
-            ["iat"=> strtotime("now"), "exp"=>strtotime("+5 minutes"), "iss"=>"$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"],
-            $_ENV['JWTFOODS']
-        );
+        $token = $this->Utils->newToken();
         return $this->response->withJson(["dados"=>$dados, "jwt"=>$token]);
     }else{
         return $this->response->withStatus(403);
@@ -98,6 +91,9 @@ $app->post('/login', function ($request, $response) {
 });
 
 
+/**
+* @conta
+**/
 $app->get('/conta', function ($request, $response) {
     return $this->response->withJson($request->getAttribute("token"));
 });

@@ -40,3 +40,7 @@ $container['Produtos'] = function ($c) {
 $container['Login'] = function ($c) {
     return new Helpers\Login();
 };
+
+$container['Utils'] = function ($c) {
+    return new Helpers\Utils();
+};

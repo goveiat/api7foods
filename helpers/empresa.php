@@ -36,12 +36,12 @@ class Empresa {
     }
 
     public function frmHorario($horario){
-        $ret = array();
+        $ret = [];
         for ($i=1; $i < 8; $i++) {
-            $horas = array();
+            $horas = [];
             foreach ($horario as $h) {
                 if (strpos($h['Day'], (string)$i) !== false) {
-                    $horas[] = array('Opens'=> $h['Opens'], 'Closes'=>$h['Closes']);
+                    $horas[] = ['Opens'=> $h['Opens'], 'Closes'=>$h['Closes']];
                 }
             }
             $ret[$i] = $horas;

@@ -43,7 +43,7 @@ class Produtos {
 
 
     public function frmProdutos($prods){
-        $produtos = array();
+        $produtos = [];
         foreach ($prods as $arrP) {
             $p = (object)$arrP;
             $cat = $p->Categoria;
@@ -56,7 +56,7 @@ class Produtos {
     }
 
     public function frmTamanhos($tams){
-        $tamanhos = array();
+        $tamanhos = [];
         foreach ($tams as $arrT) {
             $t = (object)$arrT;
             $k = $t->IDSize;
@@ -66,7 +66,7 @@ class Produtos {
     }
 
     public function frmVariedades($vars, $tamanhos){
-        $variedades = array();
+        $variedades = [];
         foreach ($vars as $arrV) {
             $v = (object)$arrV;
             $k = $v->IDProduct;
@@ -76,13 +76,13 @@ class Produtos {
                 $variedades[$k][$k2] = $v;
                 $variedades[$k][$k2]->minVal = 9999;
             }
-            $variedades[$k][$k2]->tamanhos[] = array_merge(array('valor'=>$v->Value), (array)$tamanhos[$tam]);
+            $variedades[$k][$k2]->tamanhos[] = array_merge(['valor'=>$v->Value], (array)$tamanhos[$tam]);
             if($v->Value < $variedades[$k][$k2]->minVal){
                 $variedades[$k][$k2]->minVal = $v->Value;
             }
         }
 
-        $auxVar = array();
+        $auxVar = [];
         foreach ($variedades as $k => $v) {
             $minV = 0;
             $auxVar[$k] = array_values($v);
@@ -93,7 +93,7 @@ class Produtos {
 
 
     public function frmOpcoes($ops){
-        $opcoes = array();
+        $opcoes = [];
         foreach ($ops as $arrO) {
             $o = (object)$arrO;
             $k = $o->IDProduct;
