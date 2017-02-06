@@ -32,12 +32,16 @@ $app->get('/empresa/[{host}]', function ($request, $response, $args) {
 
         //Formas de pagamento
         $retorno['tipo_pagamento'] = $this->db->query($h->qsPagamentos($id))->fetchAll();
+
+        $retorno['jwt'] = $this->Utils->checkToken($request->getHeader('Authorization')[0]);
+
+        return $this->response->withJson($retorno);
+    }else{
+        return $this->response->withStatus(403);
     }
 
 
-    $this->Utils->checkToken($retorno, $request->getHeader('Authorization')[0]);
 
-    return $this->response->withJson($retorno);
 });
 
 
@@ -67,6 +71,8 @@ $app->get('/empresa/{id}/produtos', function ($request, $response, $args) {
     $temp = $this->db->query($h->qsOpcoes($id))->fetchAll();
     $retorno['opcoes'] = $h->frmOpcoes($temp);
 
+    $retorno['jwt'] = $this->Utils->checkToken($request->getHeader('Authorization')[0]);
+
     return $this->response->withJson($retorno);
 });
 
@@ -80,11 +86,11 @@ $app->post('/login', function ($request, $response) {
 
     $cred = $request->getParsedBody();
 
-    $dados = $this->db->query($h->qsAuth($cred['user'], $cred['password']))->fetchObject();
+    $retorno['dados'] = $this->db->query($h->qsAuth($cred['user'], $cred['password']))->fetchObject();
 
-    if($dados){
-        $token = $this->Utils->newToken();
-        return $this->response->withJson(["dados"=>$dados, "jwt"=>$token]);
+    if($retorno['dados']){
+        $retorno['jwt'] = $this->Utils->newToken();
+        return $this->response->withJson($retorno);
     }else{
         return $this->response->withStatus(403);
     }

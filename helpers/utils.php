@@ -19,14 +19,15 @@ class Utils{
     }
 
 
-    public function checkToken(&$retorno, $token){
+    public function checkToken($token){
         try{
             JWT::decode($token, $_ENV['JWTFOODS'], ['HS256']);
-            $retorno['login'] = true;
-            $retorno['token'] = $this->newToken();
+            $retorno =  $this->newToken();
         }catch(Exception $e){
-            $retorno['login'] = false;
+            $retorno = false;
         }
+
+        return $retorno;
     }
 
 
