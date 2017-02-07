@@ -32,7 +32,11 @@ class Empresa {
     }
 
     public function qsHorario($id, $horario){
-        return "SELECT * from $horario where IDShop = $id ";
+        return "SELECT Day, Opens, Closes from $horario where IDShop = $id ";
+    }
+
+    public function qsRegioes($id){
+        return "SELECT IDAddress, ValueDelivery, Cidade, Bairro, Estado from companydeliveryarea where IDCompany = $id ";
     }
 
     public function frmHorario($horario){
@@ -40,12 +44,22 @@ class Empresa {
         for ($i=1; $i < 8; $i++) {
             $horas = [];
             foreach ($horario as $h) {
-                if (strpos($h['Day'], (string)$i) !== false) {
-                    $horas[] = ['Opens'=> $h['Opens'], 'Closes'=>$h['Closes']];
+                if (strpos($h[Day], (string)$i) !== false) {
+                    $horas[] = [Opens=> $h[Opens], Closes=>$h[Closes]];
                 }
             }
             $ret[$i] = $horas;
         }
+        return $ret;
+    }
+
+    public function frmRegioes($regioes){
+        $ret = [];
+        foreach ($regioes as $r) {
+            $ret['autocomplete']["$r[Bairro], $r[Cidade] - $r[Estado]"] = null;
+            $ret['valor']["$r[Bairro], $r[Cidade] - $r[Estado]"] = $r[ValueDelivery];
+        }
+
         return $ret;
     }
 

@@ -48,8 +48,8 @@ class Produtos {
             $p = (object)$arrP;
             $cat = $p->Categoria;
             $k = $p->IDProductCategory;
-            $produtos[$cat]['id'] = $k;
-            $produtos[$cat]['produtos'][] = $p;
+            $produtos[$cat][id] = $k;
+            $produtos[$cat][produtos][] = $p;
         }
 
         return $produtos;
@@ -76,7 +76,7 @@ class Produtos {
                 $variedades[$k][$k2] = $v;
                 $variedades[$k][$k2]->minVal = 9999;
             }
-            $variedades[$k][$k2]->tamanhos[] = array_merge(['valor'=>$v->Value], (array)$tamanhos[$tam]);
+            $variedades[$k][$k2]->tamanhos[] = array_merge([valor=>$v->Value], (array)$tamanhos[$tam]);
             if($v->Value < $variedades[$k][$k2]->minVal){
                 $variedades[$k][$k2]->minVal = $v->Value;
             }

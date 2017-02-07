@@ -33,6 +33,10 @@ $app->get('/empresa/[{host}]', function ($request, $response, $args) {
         //Formas de pagamento
         $retorno['tipo_pagamento'] = $this->db->query($h->qsPagamentos($id))->fetchAll();
 
+        //Áreas de entrega
+        $temp = $this->db->query($h->qsRegioes($id))->fetchAll();
+        $retorno['regioes'] = $h->frmRegioes($temp);
+
         $retorno['jwt'] = $this->Utils->checkToken($request->getHeader('Authorization')[0]);
 
         return $this->response->withJson($retorno);
