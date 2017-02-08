@@ -6,39 +6,84 @@ $app->get('/', function () {
     return $this->response->withJson(['index'=> 'api7foods']);
 });
 
+
+/**
+* @login
+**/
+$app->post('/login', function ($request, $response) {
+    $h = $this->Login;
+
+    $retorno = [];
+
+    $cred = $request->getParsedBody();
+
+    $pass = md5($cred[password]);
+
+    $retorno[dados] = $this->db->query($h->qsAuth($cred[user], $pass))->fetchObject();
+
+    if($retorno[dados]){
+
+        $retorno[enderecos] = $this->db->query($h->qsEnderecos($retorno[dados]->IDCustomer))->fetchAll();
+
+        $data = [user => $cred[user], pass =>$pass];
+
+        $retorno[jwt] = $this->Utils->newToken($data);
+
+        $retorno[iii] = JWT::decode($retorno[jwt], $_ENV[JWTFOODS], [HS256]);
+        return $this->response->withJson($retorno);
+    }else{
+        return $this->response->withStatus(403);
+    }
+});
+
+
+
 /**
 * @empresa
 **/
 $app->get('/empresa/[{host}]', function ($request, $response, $args) {
     $h = $this->Empresa;
     $retorno = [];
+    $retorno[empresa] = [];
+    $retorno[cliente] = [];
 
     $empresa = $this->db->query($h->qsDados($args['host']))->fetchObject();
 
     if($empresa){
-        $retorno['empresa'] = $empresa;
+        $retorno[empresa][dados] = $empresa;
         $id = $empresa->IDCompany;
 
         //Endereços
-        $retorno['enderecos']= $this->db->query($h->qsEnderecos($id))->fetchAll();
+        $retorno[empresa][enderecos]= $this->db->query($h->qsEnderecos($id))->fetchAll();
 
         //Horario Func
         $temp = $this->db->query($h->qsHorario($id, 'businesshours'))->fetchAll();
-        $retorno['h_funcionamento'] = $h->frmHorario($temp);
+        $retorno[empresa][hFuncionamento] = $h->frmHorario($temp);
 
         //Horario Entrega
         $temp = $this->db->query($h->qsHorario($id, 'openinghours'))->fetchAll();
-        $retorno['h_entrega'] = $h->frmHorario($temp);
+        $retorno[empresa][hEntrega] = $h->frmHorario($temp);
 
         //Formas de pagamento
-        $retorno['tipo_pagamento'] = $this->db->query($h->qsPagamentos($id))->fetchAll();
+        $retorno[empresa][tipoPagamento] = $this->db->query($h->qsPagamentos($id))->fetchAll();
 
         //Áreas de entrega
         $temp = $this->db->query($h->qsRegioes($id))->fetchAll();
-        $retorno['regioes'] = $h->frmRegioes($temp);
+        $retorno[empresa][regioes] = $h->frmRegioes($temp);
 
-        $retorno['jwt'] = $this->Utils->checkToken($request->getHeader('Authorization')[0]);
+        //verifica validade do login
+        $retorno[login] = $this->Utils->checkToken($request->getHeader('Authorization')[0]);
 
+        if($retorno[login]){
+            $hc = $this->Login;
+            $d = JWT::decode($retorno[login], $_ENV[JWTFOODS], [HS256]);
+
+            //busca cliente
+            $retorno[cliente][dados] = $this->db->query($hc->qsAuth($d->data->user, $d->data->pass))->fetchObject();
+
+            //busca enderecos do cliente
+            $retorno[cliente][enderecos] = $this->db->query($hc->qsEnderecos($retorno[cliente][dados]->IDCustomer))->fetchAll();
+        }
         return $this->response->withJson($retorno);
     }else{
         return $this->response->withStatus(403);
@@ -57,47 +102,27 @@ $app->get('/empresa/{id}/produtos', function ($request, $response, $args) {
 
     $retorno = [];
 
-    $id = $args['id'];
+    $id = $args[id];
 
     //Produtos
     $temp = $this->db->query($h->qsProdutos($id))->fetchAll();
-    $retorno['categorias'] = $h->frmProdutos($temp);
+    $retorno[categorias] = $h->frmProdutos($temp);
 
     //Tamanhos
     $temp = $this->db->query($h->qsTamanhos($id))->fetchAll();
-    $retorno['tamanhos'] = $h->frmTamanhos($temp);
+    $retorno[tamanhos] = $h->frmTamanhos($temp);
 
     //Variedades
     $temp = $this->db->query($h->qsVariedades($id))->fetchAll();
-    $retorno['variedades'] = $h->frmVariedades($temp, $retorno['tamanhos']);
+    $retorno[variedades] = $h->frmVariedades($temp, $retorno[tamanhos]);
 
     //Opções
     $temp = $this->db->query($h->qsOpcoes($id))->fetchAll();
-    $retorno['opcoes'] = $h->frmOpcoes($temp);
+    $retorno[opcoes] = $h->frmOpcoes($temp);
 
-    $retorno['jwt'] = $this->Utils->checkToken($request->getHeader('Authorization')[0]);
+    $retorno[jwt] = $this->Utils->checkToken($request->getHeader('Authorization')[0]);
 
     return $this->response->withJson($retorno);
-});
-
-/**
-* @login
-**/
-$app->post('/login', function ($request, $response) {
-    $h = $this->Login;
-
-    $retorno = [];
-
-    $cred = $request->getParsedBody();
-
-    $retorno['dados'] = $this->db->query($h->qsAuth($cred['user'], $cred['password']))->fetchObject();
-
-    if($retorno['dados']){
-        $retorno['jwt'] = $this->Utils->newToken();
-        return $this->response->withJson($retorno);
-    }else{
-        return $this->response->withStatus(403);
-    }
 });
 
 

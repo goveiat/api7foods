@@ -20,7 +20,7 @@ class Empresa {
         return "
             SELECT Address, Address2, Address3, Number, City, SEOCity, Telephone, MapLat, MapLong, Nickname, State
             from address
-            where Entity = 'company' and IDEntity = $id ";
+            where Entity = 'company' and IDEntity = $id  and Status = '1'";
     }
 
     public function qsPagamentos($id){
