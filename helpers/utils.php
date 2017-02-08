@@ -4,6 +4,7 @@ namespace Helpers;
 
 use \Firebase\JWT\JWT;
 use \Exception;
+use Helpers\Login;
 
 class Utils{
 
@@ -30,5 +31,38 @@ class Utils{
         return $retorno;
     }
 
+    public function getCliente($token, $db){
+        $retorno = false;
+
+        $token = $this->checkToken($token);
+
+        if($token){
+            $h = new Login;
+            $d = JWT::decode($token, $_ENV[JWTFOODS], [HS256]);
+
+            $retorno[token] = $token;
+
+            //busca cliente
+            $retorno[dados] = $db->query($h->qsAuth($d->data->user, $d->data->pass))->fetchObject();
+
+            //busca enderecos do cliente
+            $temp = $db->query($h->qsEnderecos($retorno[dados]->IDCustomer))->fetchAll();
+            $retorno[enderecos] = $this->formatEnderecos($temp);
+        }
+
+        return $retorno;
+    }
+
+
+    public function formatEnderecos($arr){
+        $retorno = [];
+        foreach ($arr as $e) {
+            $label = "$e[Nickname] - $e[Address], $e[Address2], $e[Number] - $e[City]";
+            $key = "$e[Address2], $e[City] - $e[State]";
+            $retorno[] = [id => $e[IDAddress], label => $label, key => $key];
+        }
+
+        return $retorno;
+    }
 
 }

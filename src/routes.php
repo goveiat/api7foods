@@ -23,13 +23,13 @@ $app->post('/login', function ($request, $response) {
 
     if($retorno[dados]){
 
-        $retorno[enderecos] = $this->db->query($h->qsEnderecos($retorno[dados]->IDCustomer))->fetchAll();
+        $temp = $this->db->query($h->qsEnderecos($retorno[dados]->IDCustomer))->fetchAll();
+        $retorno[enderecos] = $this->Utils->formatEnderecos($temp);
 
         $data = [user => $cred[user], pass =>$pass];
 
-        $retorno[jwt] = $this->Utils->newToken($data);
+        $retorno[token] = $this->Utils->newToken($data);
 
-        $retorno[iii] = JWT::decode($retorno[jwt], $_ENV[JWTFOODS], [HS256]);
         return $this->response->withJson($retorno);
     }else{
         return $this->response->withStatus(403);
@@ -72,18 +72,8 @@ $app->get('/empresa/[{host}]', function ($request, $response, $args) {
         $retorno[empresa][regioes] = $h->frmRegioes($temp);
 
         //verifica validade do login
-        $retorno[login] = $this->Utils->checkToken($request->getHeader('Authorization')[0]);
+        $retorno[cliente] = $this->Utils->getCliente($request->getHeader('Authorization')[0], $this->db);
 
-        if($retorno[login]){
-            $hc = $this->Login;
-            $d = JWT::decode($retorno[login], $_ENV[JWTFOODS], [HS256]);
-
-            //busca cliente
-            $retorno[cliente][dados] = $this->db->query($hc->qsAuth($d->data->user, $d->data->pass))->fetchObject();
-
-            //busca enderecos do cliente
-            $retorno[cliente][enderecos] = $this->db->query($hc->qsEnderecos($retorno[cliente][dados]->IDCustomer))->fetchAll();
-        }
         return $this->response->withJson($retorno);
     }else{
         return $this->response->withStatus(403);
@@ -120,7 +110,7 @@ $app->get('/empresa/{id}/produtos', function ($request, $response, $args) {
     $temp = $this->db->query($h->qsOpcoes($id))->fetchAll();
     $retorno[opcoes] = $h->frmOpcoes($temp);
 
-    $retorno[jwt] = $this->Utils->checkToken($request->getHeader('Authorization')[0]);
+    $retorno[cliente] = $this->Utils->getCliente($request->getHeader('Authorization')[0], $this->db);
 
     return $this->response->withJson($retorno);
 });
