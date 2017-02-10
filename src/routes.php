@@ -121,8 +121,9 @@ $app->get('/empresa/{id}/produtos', function ($request, $response, $args) {
 /**
 * @conta
 **/
-$app->get('/conta', function ($request, $response) {
-    return $this->response->withJson($request->getAttribute("token"));
+$app->post('/comprar', function ($request, $response) {
+    $compra = $request->getParsedBody();
+    return $this->response->withJson($compra);
 });
 
 

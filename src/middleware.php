@@ -9,7 +9,4 @@ $app->add(new \Slim\Middleware\JwtAuthentication([
     "path" => ['/conta', '/comprar'],
     "secret" => $_ENV['JWTFOODS'],
     "algorithm" => "HS256",
-    "callback" => function ($request, $response, $args){
-        exit('oi');
-    }
 ]));
