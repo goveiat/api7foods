@@ -91,25 +91,27 @@ $app->get('/empresa/{id}/produtos', function ($request, $response, $args) {
     $h = $this->Produtos;
 
     $retorno = [];
+    $ret = [];
 
     $id = $args[id];
 
     //Produtos
     $temp = $this->db->query($h->qsProdutos($id))->fetchAll();
-    $retorno[categorias] = $h->frmProdutos($temp);
+    $ret[categorias] = $h->frmProdutos($temp);
 
     //Tamanhos
     $temp = $this->db->query($h->qsTamanhos($id))->fetchAll();
-    $retorno[tamanhos] = $h->frmTamanhos($temp);
+    $ret[tamanhos] = $h->frmTamanhos($temp);
 
     //Variedades
     $temp = $this->db->query($h->qsVariedades($id))->fetchAll();
-    $retorno[variedades] = $h->frmVariedades($temp, $retorno[tamanhos]);
+    $ret[variedades] = $h->frmVariedades($temp, $ret[tamanhos]);
 
     //Opções
     $temp = $this->db->query($h->qsOpcoes($id))->fetchAll();
-    $retorno[opcoes] = $h->frmOpcoes($temp);
+    $ret[opcoes] = $h->frmOpcoes($temp);
 
+    $retorno[produtos] = $ret;
     $retorno[cliente] = $this->Utils->getCliente($request->getHeader('Authorization')[0], $this->db);
 
     return $this->response->withJson($retorno);
